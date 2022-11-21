@@ -1,6 +1,6 @@
 /** @type {import('@jest/types').Config.InitialOptions} */
 module.exports = {
-  preset: "ts-jest",
-  testEnvironment: "node",
-  setupFiles: ["dotenv/config"],
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  setupFiles: ['dotenv/config'],
 };
