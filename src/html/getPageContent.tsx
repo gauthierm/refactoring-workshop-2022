@@ -103,6 +103,12 @@ export async function getPageContent() {
     }
   });
 
+  groupedMembers.facebook.splice(10);
+  groupedMembers.other.splice(10);
+
+  groupedMembers.facebook.sort((a, b) => a.login.localeCompare(b.login));
+  groupedMembers.other.sort((a, b) => a.login.localeCompare(b.login));
+
   console.log(groupedMembers, total);
 
   return format(
