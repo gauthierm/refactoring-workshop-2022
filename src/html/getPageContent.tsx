@@ -32,7 +32,7 @@ async function getContributors(): Promise<[any[], number]> {
     }
   });
 
-  let nextPageUrl = getNextPage(res.headers.get('link') ?? '');
+  let nextPageUrl = getNextPage(res.headers.get('link') || '');
   while (nextPageUrl !== '') {
     const res = await fetch(nextPageUrl);
     const data = (await res.json()) as any[];
@@ -44,7 +44,7 @@ async function getContributors(): Promise<[any[], number]> {
         });
       }
     });
-    nextPageUrl = getNextPage(res.headers.get('link') ?? '');
+    nextPageUrl = getNextPage(res.headers.get('link') || '');
   }
 
   return [contributors, totalContributions];
@@ -60,7 +60,7 @@ async function getMembers() {
     }
   });
 
-  let nextPageUrl = getNextPage(res.headers.get('link') ?? '');
+  let nextPageUrl = getNextPage(res.headers.get('link') || '');
   while (nextPageUrl !== '') {
     const res = await fetch(nextPageUrl);
     const data = (await res.json()) as any[];
@@ -69,7 +69,7 @@ async function getMembers() {
         members.push(contributor.login);
       }
     });
-    nextPageUrl = getNextPage(res.headers.get('link') ?? '');
+    nextPageUrl = getNextPage(res.headers.get('link') || '');
   }
   return members;
 }
