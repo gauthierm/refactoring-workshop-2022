@@ -3,34 +3,48 @@
   <head>
     <style>
       body {
-        background: #444;
+        font-family: sans-serif;
+        padding: 0;
+        margin: 0;
       }
       table {
-        background: #eee;
-        border: 1px solid #000;
-        border-color: rgba(255, 255, 255, 1) rgba(0, 0, 0, 0.5)
-          rgba(0, 0, 0, 0.5) rgba(255, 255, 255, 1);
         width: 100%;
-        border-spacing: 2px;
+        border-spacing: 0;
+      }
+      h2 {
+        text-transform: capitalize;
+        font-weight: 400;
+        margin: 0 0 0.5rem;
+      }
+      thead > tr > * {
+        border-bottom: 2px solid #20232a;
+      }
+      tfoot > tr > * {
+        border-top: 2px solid #20232a;
+      }
+      tbody > tr > * {
+        border-bottom: 1px solid #ececec;
       }
       th,
       td {
         text-align: left;
-        border: 1px solid #000;
-        border-color: rgba(0, 0, 0, 0.5) rgba(255, 255, 255, 1)
-          rgba(255, 255, 255, 1) rgba(0, 0, 0, 0.5);
-        padding: 2px 4px;
+        padding: 0.5rem 0;
+      }
+      th + th,
+      td + td {
+        text-align: right;
       }
       .content {
+        padding: 3rem 2rem;
         display: flex;
         align-items: flex-start;
-        gap: 8px;
+        gap: 1rem;
       }
       .table {
         flex: 1 1 auto;
       }
       .major {
-        color: #c00;
+        color: #06b1e0;
       }
     </style>
   </head>
