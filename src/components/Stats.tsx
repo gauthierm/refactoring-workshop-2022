@@ -10,7 +10,7 @@ function getTable(title: string, total: number, contributors: any[]) {
         className={contributor?.majorContributor ? 'major' : ''}
       >
         <td>{contributor.login}</td>
-        <td>{contributor.contributions}</td>
+        <td>{contributor.contributions.toLocaleString()}</td>
       </tr>
     );
   });
@@ -29,7 +29,7 @@ function getTable(title: string, total: number, contributors: any[]) {
         <tfoot>
           <tr>
             <th>total</th>
-            <th>{total}</th>
+            <th>{total.toLocaleString()}</th>
           </tr>
         </tfoot>
       </table>
