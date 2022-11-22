@@ -9,7 +9,11 @@ function getTable(title: string, total: number, contributors: any[]) {
         key={contributor.login}
         className={contributor?.majorContributor ? 'major' : ''}
       >
-        <td>{contributor.login}</td>
+        <td>
+          <a href={`https://github.com/${contributor.login}`}>
+            {contributor.login}
+          </a>
+        </td>
         <td>{contributor.contributions.toLocaleString()}</td>
       </tr>
     );
