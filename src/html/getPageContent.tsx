@@ -22,7 +22,9 @@ async function getContributors(): Promise<[any[], number]> {
   const data = (await res.json()) as any[];
   data.forEach((contributor) => {
     if (contributor.type === 'User') {
+      const majorContributor = contributor.contributions > 500 ? true : false;
       contributors.push({
+        majorContributor,
         login: contributor.login,
         contributions: contributor.contributions,
       });
