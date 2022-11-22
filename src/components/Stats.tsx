@@ -39,14 +39,14 @@ function getTable(title: string, total: number, contributors: any[]) {
 
 interface StatsProps {
   groupedContributors: { [key: string]: any[] };
+  totals: { [key: string]: number };
 }
 
-export function Stats({ groupedContributors }: StatsProps) {
+export function Stats({ groupedContributors, totals }: StatsProps) {
   const tables: any[] = [];
 
   Object.entries(groupedContributors).forEach(([key, value]) => {
-    let total = 0;
-    tables.push(getTable(key, total, value));
+    tables.push(getTable(key, totals[key], value));
   });
 
   return <>{tables}</>;

@@ -94,12 +94,15 @@ export async function getPageContent() {
   const members = await getMembers();
 
   const groupedMembers: { [key: string]: any[] } = { facebook: [], other: [] };
+  const totals: { [key: string]: number } = { facebook: 0, other: 0 };
 
   contributors.forEach((contributor) => {
     if (members.includes(contributor.login)) {
       groupedMembers.facebook.push(contributor);
+      totals.facebook += contributor.contributions;
     } else {
       groupedMembers.other.push(contributor);
+      totals.other += contributor.contributions;
     }
   });
 
@@ -114,7 +117,7 @@ export async function getPageContent() {
   return format(
     await renderFile(__dirname + '/../views/template.ejs', {
       content: ReactDOMServer.renderToString(
-        <Stats groupedContributors={groupedMembers} />
+        <Stats groupedContributors={groupedMembers} totals={totals} />
       ),
     }),
     {
