@@ -16,7 +16,7 @@ async function getContributors(): Promise<[any[], number]> {
   let totalContributions = 0;
 
   const res = await fetch(
-    `http://localhost:${port}/api//repos/facebook/react/contributors`
+    `http://localhost:${port}/api/repos/facebook/react/contributors`
   );
 
   const data = (await res.json()) as any[];
