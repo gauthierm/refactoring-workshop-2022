@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+import { renderFile } from 'ejs';
 import { format } from 'prettier';
 import fetch from 'node-fetch';
 import { Stats } from '../components/Stats';
@@ -105,48 +106,13 @@ export async function getPageContent() {
   console.log(groupedMembers, total);
 
   return format(
-    `<!DOCTYPE html>
-<html>
-  <head>
-    <style>
-      body {
-        background: #444;
-      }
-      table {
-        background: #eee;
-        border: 1px solid #000;
-        border-color: rgba(255,255,255,1) rgba(0,0,0,0.5) rgba(0,0,0,0.5) rgba(255,255,255,1);
-        width: 100%;
-        border-spacing: 2px;
-      }
-      th, td {
-        text-align: left;
-        border: 1px solid #000;
-        border-color: rgba(0,0,0,0.5) rgba(255,255,255,1) rgba(255,255,255,1) rgba(0,0,0,0.5);
-        padding: 2px 4px;
-      }
-      .content {
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
-      }
-      .table {
-        flex: 1 1 auto;
-      }
-      .major {
-        color: #c00;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="content">
-      ${ReactDOMServer.renderToString(
+    await renderFile(__dirname + '/../views/template.ejs', {
+      content: ReactDOMServer.renderToString(
         <Stats groupedContributors={groupedMembers} />
-      )}
-    </div>
-  </body>
-</html>
-`,
-    { parser: 'html' }
+      ),
+    }),
+    {
+      parser: 'html',
+    }
   );
 }
