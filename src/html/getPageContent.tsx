@@ -6,15 +6,8 @@ import fetch from 'node-fetch';
 import { Stats } from '../components/Stats';
 import { port } from '../config';
 
-// TODO:
-// - top 10 facebook contributors
-// - top 10 non-facebook contributors
-// - total facebook, non-facebook contributions
-// - sort by name or contributions
-
-async function getContributors(): Promise<[any[], number]> {
+async function getContributors(): Promise<any[]> {
   const contributors: any[] = [];
-  let totalContributions = 0;
 
   const res = await fetch(
     `http://localhost:${port}/api/repos/facebook/react/contributors`
@@ -29,7 +22,6 @@ async function getContributors(): Promise<[any[], number]> {
         login: contributor.login,
         contributions: contributor.contributions,
       });
-      totalContributions += contributor.contributions;
     }
   });
 
@@ -48,7 +40,7 @@ async function getContributors(): Promise<[any[], number]> {
     nextPageUrl = getNextPage(res.headers.get('link') || '');
   }
 
-  return [contributors, totalContributions];
+  return contributors;
 }
 
 async function getMembers() {
@@ -89,8 +81,8 @@ function getNextPage(linkHeader: string): string {
   return nextLink;
 }
 
-export async function getPageContent() {
-  const [contributors, total] = await getContributors();
+async function getGroupedMemberData() {
+  const contributors = await getContributors();
   const members = await getMembers();
 
   const groupedMembers: { [key: string]: any[] } = { facebook: [], other: [] };
@@ -112,12 +104,21 @@ export async function getPageContent() {
   groupedMembers.facebook.sort((a, b) => a.login.localeCompare(b.login));
   groupedMembers.other.sort((a, b) => a.login.localeCompare(b.login));
 
-  console.log(groupedMembers, total);
+  return {
+    contributors: groupedMembers,
+    totals,
+  };
+}
+
+export async function getPageContent() {
+  const { contributors, totals } = await getGroupedMemberData();
+
+  console.log(contributors, totals);
 
   return format(
     await renderFile(__dirname + '/../views/template.ejs', {
       content: ReactDOMServer.renderToString(
-        <Stats groupedContributors={groupedMembers} totals={totals} />
+        <Stats groupedContributors={contributors} totals={totals} />
       ),
     }),
     {

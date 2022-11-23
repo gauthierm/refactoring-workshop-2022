@@ -42,6 +42,7 @@ This workshop is about refactoring. Included is a working application that does 
 - getNextPage
 - getContributors
 - getMembers
+- getGroupedMembers
 
 ### 2. Clean up `getNextPage()` using a functional approach
 
@@ -50,6 +51,11 @@ This workshop is about refactoring. Included is a working application that does 
 - remove let declaration
 
 ### 3. clean up pagination, using a generic approach
+
+The `getMembers()` and `getContributors()` functions have an almost identical
+program flow. Let’s collect that flow into a new function called `getData()`
+so we are not repeating ourselves twice. This way we can write tests for the
+implementation once.
 
 - make a `getData(url: string): Promise<any[]>` function
 - use array spread operators instead of concat
@@ -73,14 +79,44 @@ Our contributor and member functions are split into two parts, one to load the d
 - write an aggregation function and test
 - update functions to use the new filter, map, and reduce functions
 
-### 6. Split `getContributors()` into two functions.
+### 6. inject dependencies for `getGroupedMemberData()` data
 
-The `getContributors()` function is doing aggregating data and building a new array. Splitting it into two single-purpose functions will make the code cleaner and easier to understand and test.
+This function uses the contributor list and member list to get the data for the
+page. Right now, the other functions are called in the implementation of this
+function. This makes it more difficult to test or refactor.
 
-- split into two functions `getContributors(data: any[])` and `getTotalContributions(contributors: any[])`
-- update existing tests to split out aggregation tests.
+Instead, we can pass the required data to the function as parameters. This will
+allow us to easily pass in mock data in tests. It is a better design that
+reduces the dependencies between functions.
 
-### 7. Use TypeScript generics with `getData()`
+- update `getGroupedMemberData()` to `getGroupedMemberData(contributors: any[], members: any[])`
+- it no longer needs to be async and can be a pure function
+- write a test cast for the new function
+
+### 7. Use a more functional approach for `getGroupedMemberData()`
+
+The function is still using array push running totals and are using a
+conditional to filter data inside a forEach.
+
+If there were more than two groups, the approach might be different.
+
+- use a reducer function to partition the array in facebook vs non-facebook data
+- use an object map and a reducer to get grouped totals
+
+### 8. Split `getGroupedMemberData()` into discrete functions.
+
+The `getGroupedMembers()` function is doing data aggregation, data partitioning
+sorting, etc. Splitting it into single-purpose functions will make the code
+cleaner and easier to understand and test.
+
+- split by steps: grouping data, totalling data, cleanup for display
+- create `getContributorsByOrganization(data: any[])` to partition data
+- create `getTotalContribututionsByOrganization(groupedContributors: { [key: string]: any[] })` to get totals
+- create `getDisplayData(groupedContributors: { [key: string]: any[] })` to sort and truncate data
+- use the new functions in `getPageContent()`
+- update tests
+
+### 9. Use TypeScript generics with `getData()`
 
 The `getData()` function returns an array of `any` type. We can take advantage of TypeScript generics and have it return a known type that we specify.
 
@@ -88,8 +124,9 @@ The `getData()` function returns an array of `any` type. We can take advantage o
 - make `Contributor` and `Member` interfaces for our data
 - cast the `json()` calls in `getData()` to the type `T`
 - when calling `getData()`, pass in the generic type like `getData<Contributor>(...)`
+- update other functions that use the data to use the interfaces
 
-### 8. Add run-time data validation
+### 10. Add run-time data validation
 
 If GitHub changes their response format, we'll have unexpected unhandled errors.
 
@@ -97,3 +134,20 @@ If GitHub changes their response format, we'll have unexpected unhandled errors.
 - update getData `getData<T extends z.ZodTypeAny>(schema: T): Promise<Array<z.infer<T>>>`
 - use `schema.parse()` to validate data rows in `getData()`
 - use `z.infer` to redefine our existing interfaces for `Contributor` and `Member`
+
+### 11. Next steps
+
+The React code in `components` has similar issues. Can it be cleaned up in the same way? Remember that files with JSX need the extension `.tsx`.
+
+- Should there be more components created?
+- Better TypeScript interfaces?
+- Functional approach?
+- Tests?
+
+## Takeaways
+
+1. make functions do one thing
+2. consider inputs and outputs and consider using function parameters for inputs
+3. consider a functional approach instead of an imperative approach. When you see state mutation operations like let , push , += , = (without const) be wary.
+4. use TypeScript types with generics to write safe, flexible code
+5. think about how code will be tested. If you can test it easily, it's probably well designed.
