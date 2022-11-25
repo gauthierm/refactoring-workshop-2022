@@ -1,18 +1,4 @@
-import { port } from '../config';
-import { getContributors } from './getContributors';
-import { getData } from './getData';
-import { getMembers } from './getMembers';
-
-export async function getGroupedMemberData() {
-  const contributors = getContributors(
-    await getData(
-      `http://localhost:${port}/api/repos/facebook/react/contributors`
-    )
-  );
-  const members = getMembers(
-    await getData(`http://localhost:${port}/api/orgs/facebook/members`)
-  );
-
+export function getGroupedMemberData(contributors: any[], members: any[]) {
   const groupedMembers: { [key: string]: any[] } = { facebook: [], other: [] };
   const totals: { [key: string]: number } = { facebook: 0, other: 0 };
 
@@ -25,6 +11,9 @@ export async function getGroupedMemberData() {
       totals.other += contributor.contributions;
     }
   });
+
+  groupedMembers.facebook.sort((a, b) => b.contributions - a.contributions);
+  groupedMembers.other.sort((a, b) => b.contributions - a.contributions);
 
   groupedMembers.facebook.splice(10);
   groupedMembers.other.splice(10);
