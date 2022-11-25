@@ -6,16 +6,14 @@ export async function getData<T extends z.ZodTypeAny>(
   schema: T,
   url: string
 ): Promise<Array<z.infer<T>>> {
-  const res = await fetch(url);
+  if (url !== '') {
+    const res = await fetch(url);
 
-  let data = z.array(schema).parse(await res.json());
-
-  let nextPageUrl = getNextPage(res.headers.get('link') ?? '');
-  while (nextPageUrl !== '') {
-    const res = await fetch(nextPageUrl);
-    data = data.concat(z.array(schema).parse(await res.json()));
-    nextPageUrl = getNextPage(res.headers.get('link') ?? '');
+    return [
+      ...z.array(schema).parse(await res.json()),
+      ...(await getData(schema, getNextPage(res.headers.get('link') ?? ''))),
+    ];
   }
 
-  return data;
+  return [];
 }
