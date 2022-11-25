@@ -1,9 +1,17 @@
+import { port } from '../config';
 import { getContributors } from './getContributors';
+import { getData } from './getData';
 import { getMembers } from './getMembers';
 
 export async function getGroupedMemberData() {
-  const contributors = await getContributors();
-  const members = await getMembers();
+  const contributors = getContributors(
+    await getData(
+      `http://localhost:${port}/api/repos/facebook/react/contributors`
+    )
+  );
+  const members = getMembers(
+    await getData(`http://localhost:${port}/api/orgs/facebook/members`)
+  );
 
   const groupedMembers: { [key: string]: any[] } = { facebook: [], other: [] };
   const totals: { [key: string]: number } = { facebook: 0, other: 0 };
