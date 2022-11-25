@@ -1,6 +1,6 @@
-import { getGroupedMemberData } from './getGroupedMemberData';
+import { getContributorsByOrganization } from './getContributorsByOrganization';
 
-describe('getGroupedMemberData()', () => {
+describe('getContributorsByOrganization()', () => {
   const contributors = [
     {
       login: 'gauthierm',
@@ -64,39 +64,20 @@ describe('getGroupedMemberData()', () => {
     },
   ];
 
-  test('truncates other data at 10 contributors', () => {
-    expect(
-      getGroupedMemberData(contributors, []).contributors.other
-    ).toHaveLength(10);
-  });
-
-  test('sorts by contributions before truncating other data', () => {
-    expect(
-      getGroupedMemberData(contributors, []).contributors.other.map(
-        (contributor) => contributor.login
-      )
-    ).not.toContain('gauthierm');
-  });
-
   test('partitions data based on facebook membership', () => {
     const members = ['gauthierm', 'wittman', 'robcee'];
-    const data = getGroupedMemberData(contributors, members);
+    const groupedContributors = getContributorsByOrganization(
+      contributors,
+      members
+    );
 
     members.forEach((member) => {
       expect(
-        data.contributors.facebook.map((contributor) => contributor.login)
+        groupedContributors.facebook.map((contributor) => contributor.login)
       ).toContain(member);
       expect(
-        data.contributors.other.map((contributor) => contributor.login)
+        groupedContributors.other.map((contributor) => contributor.login)
       ).not.toContain(member);
     });
-  });
-
-  test('aggregates contributions', () => {
-    const members = ['gauthierm', 'wittman', 'robcee'];
-    const data = getGroupedMemberData(contributors, members);
-
-    expect(data.totals.facebook).toBe(2600);
-    expect(data.totals.other).toBe(8250);
   });
 });

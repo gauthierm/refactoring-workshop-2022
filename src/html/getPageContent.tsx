@@ -4,11 +4,13 @@ import { renderFile } from 'ejs';
 import { format } from 'prettier';
 import fetch from 'node-fetch';
 import { Stats } from '../components/Stats';
-import { getGroupedMemberData } from './getGroupedMemberData';
 import { getContributors } from './getContributors';
 import { getMembers } from './getMembers';
 import { getData } from './getData';
 import { port } from '../config';
+import { getContributorsByOrganization } from './getContributorsByOrganization';
+import { getTotalContributionsByOrganization } from './getTotalContributionsByOrganization';
+import { getContributorsToDisplay } from './getContributorsToDisplay';
 
 export async function getPageContent() {
   const allContributors = getContributors(
@@ -20,10 +22,12 @@ export async function getPageContent() {
     await getData(`http://localhost:${port}/api/orgs/facebook/members`)
   );
 
-  const { contributors, totals } = getGroupedMemberData(
+  const groupedContributors = getContributorsByOrganization(
     allContributors,
     members
   );
+  const totals = getTotalContributionsByOrganization(groupedContributors);
+  const contributors = getContributorsToDisplay(groupedContributors);
 
   console.log(contributors, totals);
 
