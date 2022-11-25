@@ -37,12 +37,12 @@ The second item (displaying data from the API) is where we will focus in today's
 
 This workshop is about refactoring. Included is a working application that does not follow best practices. We will rafactor it to make it faster, easier to read, more testable and more resiliant.
 
-### 1. Split file into smaller individual component functions
+### 1. Split file `getPageContent.tsx` into smaller individual component functions
 
 - getNextPage
 - getContributors
 - getMembers
-- getGroupedMembers
+- getGroupedMemberData
 
 ### 2. Clean up `getNextPage()` using a functional approach
 
@@ -58,28 +58,32 @@ so we are not repeating ourselves twice. This way we can write tests for the
 implementation once.
 
 - make a `getData(url: string): Promise<any[]>` function
-- use array spread operators instead of concat
+- use array concat operator instead of push in a loop
 - use the new generic pagination routine in getContributors and getMembers
 
-### 4. make `getContributors()` and `getMembers()` use new function
+### 4. Inject dependencies for `getContributors()` and `getMembers()` functions
 
-Our contributor and member functions are split into two parts, one to load the data and one to build the return value
+Right now the contributor and member functions do both loading the data and
+manipulating the data to build a result.
 
-- update function to receive the list of members
-- now we can write a test for it
+- update functions to receive the data as a parameter
+- now we can easily write a tests for them
 
 ### 5. use functional approach for `getContributors()` and `getMembers()`
 
 - we are conditionally including values in our result, this can be replaced with a filter function
 - we are returning a new array with modified values. This can be replaced with a map function
-- we are aggregating data. This can be replaced with a reduce.
-- write a bot filtering function and a test
-- write a contributor transform function and a test
-- write member transform function and a test
-- write an aggregation function and test
-- update functions to use the new filter, map, and reduce functions
 
-### 6. inject dependencies for `getGroupedMemberData()` data
+### 6. Write an `isUser()` function
+
+We use the same logic to check for bots in both places. We can extract this to
+a reusable function with its own tests.
+
+- write isUser()
+- write tests
+- update getContributors and getMembers to use new function
+
+### 7. inject dependencies for `getGroupedMemberData()` data
 
 This function uses the contributor list and member list to get the data for the
 page. Right now, the other functions are called in the implementation of this
@@ -93,7 +97,7 @@ reduces the dependencies between functions.
 - it no longer needs to be async and can be a pure function
 - write a test cast for the new function
 
-### 7. Use a more functional approach for `getGroupedMemberData()`
+### 8. Use a more functional approach for `getGroupedMemberData()`
 
 The function is still using array push running totals and are using a
 conditional to filter data inside a forEach.
@@ -103,20 +107,29 @@ If there were more than two groups, the approach might be different.
 - use a reducer function to partition the array in facebook vs non-facebook data
 - use an object map and a reducer to get grouped totals
 
-### 8. Split `getGroupedMemberData()` into discrete functions.
+### 9. Split `getGroupedMemberData()` into discrete functions.
 
 The `getGroupedMembers()` function is doing data aggregation, data partitioning
 sorting, etc. Splitting it into single-purpose functions will make the code
 cleaner and easier to understand and test.
 
 - split by steps: grouping data, totalling data, cleanup for display
-- create `getContributorsByOrganization(data: any[])` to partition data
+- create `getContributorsByOrganization(contributors: any[], members: any[])` to partition data
 - create `getTotalContribututionsByOrganization(groupedContributors: { [key: string]: any[] })` to get totals
-- create `getDisplayData(groupedContributors: { [key: string]: any[] })` to sort and truncate data
+- create `getContributorsToDisplay(groupedContributors: { [key: string]: any[] })` to sort and truncate data
 - use the new functions in `getPageContent()`
 - update tests
 
-### 9. Use TypeScript generics with `getData()`
+### 10. Update `getContributorsToDisplay()` to not mutate input
+
+Sorting and splicing in JavaScript are in-place functions and will modify the
+input value. This side-effect could unintentionall impact the code in the
+calling context.
+
+- use slice instead of splice to create a copy of the array
+- clean up repeated code while we're at it usign an object-map
+
+### 11. Use TypeScript generics with `getData()`
 
 The `getData()` function returns an array of `any` type. We can take advantage of TypeScript generics and have it return a known type that we specify.
 
@@ -126,7 +139,7 @@ The `getData()` function returns an array of `any` type. We can take advantage o
 - when calling `getData()`, pass in the generic type like `getData<Contributor>(...)`
 - update other functions that use the data to use the interfaces
 
-### 10. Add run-time data validation
+### 12. Add run-time data validation
 
 If GitHub changes their response format, we'll have unexpected unhandled errors.
 
@@ -135,7 +148,13 @@ If GitHub changes their response format, we'll have unexpected unhandled errors.
 - use `schema.parse()` to validate data rows in `getData()`
 - use `z.infer` to redefine our existing interfaces for `Contributor` and `Member`
 
-### 11. Next steps
+### 13. Parallelize promise calls.
+
+The `getContributors()` and `getMember()` function do not depend on each other so we can call them in parallel.
+
+- Use Promise.all and array destructuring to call both APIs at the same time.
+
+### 14. Next steps
 
 The React code in `components` has similar issues. Can it be cleaned up in the same way? Remember that files with JSX need the extension `.tsx`.
 
@@ -146,8 +165,16 @@ The React code in `components` has similar issues. Can it be cleaned up in the s
 
 ## Takeaways
 
-1. make functions do one thing
-2. consider inputs and outputs and consider using function parameters for inputs
-3. consider a functional approach instead of an imperative approach. When you see state mutation operations like let , push , += , = (without const) be wary.
-4. use TypeScript types with generics to write safe, flexible code
-5. think about how code will be tested. If you can test it easily, it's probably well designed.
+**Reduce scope of individual files.** We've decomposed the original file into several smaller files that are easier to understand.
+
+**Add tests** to catch bugs and enable refactoring. We've added a whole bunch of great tests as we split up and improved our code.
+
+**Make functions do one thing.** Several functions were doing multiple things. If we can make them do one thing, it makes testing easier and makes implementations simpler.
+
+**Lift dependencies higher** in your code and pass them in as function arguments. This helps you write code that is more functional and easily tested.
+
+**When you see state mutation, be wary.** Look out for let, push, forEach, sort, slice, += and other mutation operators in JavaScript. When values are mutated, there is more opportunity for untentional side-effects.
+
+**TypeScript is great** and we can use it to write code that is safe and flexible.
+
+**Think about how your code will be tested**. If you can test it easily, it's probably well designed.
