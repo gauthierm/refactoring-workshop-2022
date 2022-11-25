@@ -1,5 +1,5 @@
+import { isUser } from './isUser';
+
 export function getMembers(data: any[]) {
-  return data
-    .filter((member) => member.type === 'User')
-    .map((member) => member.login);
+  return data.filter(isUser).map((member) => member.login);
 }
