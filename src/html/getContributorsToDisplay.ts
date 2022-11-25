@@ -1,16 +1,13 @@
 export function getContributorsToDisplay(groupedContributors: {
   [key: string]: any[];
 }) {
-  groupedContributors.facebook.sort(
-    (a, b) => b.contributions - a.contributions
+  return Object.fromEntries(
+    Object.entries(groupedContributors).map(([key, contributors]) => {
+      const displayContributors = contributors.slice();
+      displayContributors.sort((a, b) => b.contributions - a.contributions);
+      displayContributors.splice(10);
+      displayContributors.sort((a, b) => a.login.localeCompare(b.login));
+      return [key, displayContributors];
+    })
   );
-  groupedContributors.other.sort((a, b) => b.contributions - a.contributions);
-
-  groupedContributors.facebook.splice(10);
-  groupedContributors.other.splice(10);
-
-  groupedContributors.facebook.sort((a, b) => a.login.localeCompare(b.login));
-  groupedContributors.other.sort((a, b) => a.login.localeCompare(b.login));
-
-  return groupedContributors;
 }
