@@ -1,10 +1,5 @@
+import { ApiContributor } from '../schema/contributor';
 import { isUser } from './isUser';
-
-export interface ApiContributor {
-  login: string;
-  type: string;
-  contributions: number;
-}
 
 export interface Contributor {
   login: string;

@@ -3,22 +3,26 @@ import ReactDOMServer from 'react-dom/server';
 import { renderFile } from 'ejs';
 import { format } from 'prettier';
 import { Stats } from '../components/Stats';
-import { ApiContributor, getContributors } from './getContributors';
-import { ApiMember, getMembers } from './getMembers';
+import { getContributors } from './getContributors';
+import { getMembers } from './getMembers';
 import { getData } from './getData';
 import { port } from '../config';
 import { getContributorsByOrganization } from './getContributorsByOrganization';
 import { getTotalContributionsByOrganization } from './getTotalContributionsByOrganization';
 import { getContributorsToDisplay } from './getContributorsToDisplay';
+import { contributorSchema } from '../schema/contributor';
+import { memberSchema } from '../schema/member';
 
 export async function getPageContent() {
   const allContributors = getContributors(
-    await getData<ApiContributor>(
+    await getData(
+      contributorSchema,
       `http://localhost:${port}/api/repos/facebook/react/contributors`
     )
   );
   const members = getMembers(
-    await getData<ApiMember>(
+    await getData(
+      memberSchema,
       `http://localhost:${port}/api/orgs/facebook/members`
     )
   );
