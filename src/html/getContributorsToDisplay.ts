@@ -1,5 +1,7 @@
+import { Contributor } from './getContributors';
+
 export function getContributorsToDisplay(groupedContributors: {
-  [key: string]: any[];
+  [key: string]: Contributor[];
 }) {
   return Object.fromEntries(
     Object.entries(groupedContributors).map(([key, contributors]) => {

@@ -47,7 +47,7 @@ describe('getContributors()', () => {
           login: 'gauthierm',
           contributions: 500,
         },
-      ]).at(0).majorContributor
+      ]).at(0)?.majorContributor
     ).toBe(false);
   });
   test('detects major contributors', () => {
@@ -58,7 +58,7 @@ describe('getContributors()', () => {
           login: 'gauthierm',
           contributions: 501,
         },
-      ]).at(0).majorContributor
+      ]).at(0)?.majorContributor
     ).toBe(true);
   });
 });

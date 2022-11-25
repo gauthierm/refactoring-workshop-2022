@@ -1,5 +1,7 @@
+import { Contributor } from './getContributors';
+
 export function getTotalContributionsByOrganization(groupedContributors: {
-  [key: string]: any[];
+  [key: string]: Contributor[];
 }) {
   return Object.fromEntries(
     Object.entries(groupedContributors).map(([group, contributors]) => {

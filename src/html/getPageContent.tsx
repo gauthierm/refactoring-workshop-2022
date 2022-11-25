@@ -2,10 +2,9 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { renderFile } from 'ejs';
 import { format } from 'prettier';
-import fetch from 'node-fetch';
 import { Stats } from '../components/Stats';
-import { getContributors } from './getContributors';
-import { getMembers } from './getMembers';
+import { ApiContributor, getContributors } from './getContributors';
+import { ApiMember, getMembers } from './getMembers';
 import { getData } from './getData';
 import { port } from '../config';
 import { getContributorsByOrganization } from './getContributorsByOrganization';
@@ -14,12 +13,14 @@ import { getContributorsToDisplay } from './getContributorsToDisplay';
 
 export async function getPageContent() {
   const allContributors = getContributors(
-    await getData(
+    await getData<ApiContributor>(
       `http://localhost:${port}/api/repos/facebook/react/contributors`
     )
   );
   const members = getMembers(
-    await getData(`http://localhost:${port}/api/orgs/facebook/members`)
+    await getData<ApiMember>(
+      `http://localhost:${port}/api/orgs/facebook/members`
+    )
   );
 
   const groupedContributors = getContributorsByOrganization(

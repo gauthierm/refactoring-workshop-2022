@@ -30,7 +30,6 @@ describe('getMembers()', () => {
         {
           type: 'User',
           login: 'gauthierm',
-          contributions: 200,
         },
       ])
     ).toEqual(['gauthierm']);

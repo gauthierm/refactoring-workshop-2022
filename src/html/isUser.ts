@@ -1,3 +1,3 @@
-export function isUser(user: any) {
+export function isUser(user: { type: string }) {
   return user.type === 'User';
 }

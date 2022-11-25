@@ -1,10 +1,12 @@
+import { Contributor } from './getContributors';
+
 export function getContributorsByOrganization(
-  contributors: any[],
-  members: any[]
+  contributors: Contributor[],
+  members: string[]
 ) {
   return contributors.reduce<{
-    facebook: any[];
-    other: any[];
+    facebook: Contributor[];
+    other: Contributor[];
   }>(
     ({ facebook, other }, contributor) => {
       return members.includes(contributor.login)
