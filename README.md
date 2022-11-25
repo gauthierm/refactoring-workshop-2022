@@ -44,7 +44,7 @@ This workshop is about refactoring. Included is a working application that does 
 - getMembers
 - getGroupedMemberData
 
-### 2. Clean up `getNextPage()` using a functional approach
+### 2. Clean up `getNextPage()` using a declarative approach
 
 - write test cases in `getNextPage.test.ts`
 - use map + filter
@@ -69,7 +69,7 @@ manipulating the data to build a result.
 - update functions to receive the data as a parameter
 - now we can easily write a tests for them
 
-### 5. use functional approach for `getContributors()` and `getMembers()`
+### 5. use declarative approach for `getContributors()` and `getMembers()`
 
 - we are conditionally including values in our result, this can be replaced with a filter function
 - we are returning a new array with modified values. This can be replaced with a map function
@@ -97,7 +97,7 @@ reduces the dependencies between functions.
 - it no longer needs to be async and can be a pure function
 - write a test cast for the new function
 
-### 8. Use a more functional approach for `getGroupedMemberData()`
+### 8. Use a more declarative approach for `getGroupedMemberData()`
 
 The function is still using array push running totals and are using a
 conditional to filter data inside a forEach.
@@ -160,7 +160,7 @@ The React code in `components` has similar issues. Can it be cleaned up in the s
 
 - Should there be more components created?
 - Better TypeScript interfaces?
-- Functional approach?
+- Declarative approach?
 - Tests?
 
 ## Takeaways
@@ -171,7 +171,7 @@ The React code in `components` has similar issues. Can it be cleaned up in the s
 
 **Make functions do one thing.** Several functions were doing multiple things. If we can make them do one thing, it makes testing easier and makes implementations simpler.
 
-**Lift dependencies higher** in your code and pass them in as function arguments. This helps you write code that is more functional and easily tested.
+**Lift dependencies higher** in your code and pass them in as function arguments. This helps you write code that is easier to read and easier to test.
 
 **When you see state mutation, be wary.** Look out for let, push, forEach, sort, slice, += and other mutation operators in JavaScript. When values are mutated, there is more opportunity for untentional side-effects.
 
